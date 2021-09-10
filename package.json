@@ -1,0 +1,26 @@
+{
+  "name": "url-shortner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Arpit Goyal",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "browser-detect": "^0.2.28",
+    "chart.js": "^3.5.1",
+    "detect-browser": "^5.2.0",
+    "device-detector-js": "^2.2.10",
+    "dns": "^0.2.2",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.5",
+    "navigator": "^1.0.1",
+    "satelize": "^0.2.0"
+  }
+}

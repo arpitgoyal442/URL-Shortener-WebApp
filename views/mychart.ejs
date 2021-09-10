@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Short URL Info.</title>
+  <script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-core.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-pie.min.js"></script>
+</head>
+
+<body>
+  <h1 style="color: coral; justify-content: center; text-align: center;">Total Visits: <%=datacoming.visits%></h1>
+  <div id="containera" style="width: 100%; height: 100% ; margin-top: 40px;"></div>
+  <div id="containerb" style="width: 100%; height: 100% ; margin-top: 40px;"></div>
+  <div id="containerc" style="width: 100%; height: 100% ; margin-top: 40px;"></div>
+
+  <script>
+
+    anychart.onDocumentReady(function () { 
+
+      // set the data
+      var countriesdata = [];
+      var browsersdata = [];
+      var osdata = [];
+
+      let alldata = '<%- JSON.stringify(datacoming) %>';
+
+      let countries = JSON.parse(alldata).countries;
+      let browsers = JSON.parse(alldata).browsers;
+      let os = JSON.parse(alldata).os;
+
+      Object.keys(countries).forEach(function (key, idx) {
+
+        let obj = {
+          x: key,
+          value: countries[key]
+        }
+        countriesdata.push(obj);
+      });
+
+      Object.keys(browsers).forEach(function (key, idx) {
+
+        let obj = {
+          x: key,
+          value: browsers[key]
+        }
+        browsersdata.push(obj);
+
+
+      });
+
+      Object.keys(os).forEach(function (key, idx) {
+
+
+        let obj = {
+          x: key,
+          value: os[key]
+        }
+        osdata.push(obj);
+
+
+      });
+
+      var countrieschart = anychart.pie();
+
+      countrieschart.title("Visits Based on Country");
+
+      countrieschart.data(countriesdata);
+
+      countrieschart.container('containera');
+      countrieschart.draw();
+
+      var browserschart = anychart.pie();
+
+      browserschart.title("Visits Based on Browsers");
+
+      browserschart.data(browsersdata);
+
+      browserschart.container('containerb');
+      browserschart.draw();
+
+      var oschart = anychart.pie();
+
+      oschart.title("Visits Based on Operating System");
+
+      oschart.data(osdata);
+
+      oschart.container('containerc');
+      oschart.draw();
+
+    });
+
+
+  </script>
+
+
+   
+</body>
+
+</html>
