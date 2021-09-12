@@ -1,27 +1,20 @@
 //Importing 
 import express from "express"
-
 import bodyParser from "body-parser"
 import mongoose from "mongoose"
 import dataSchema from "./dataSchema.js"
+import useragent from "useragent"
 
 
-
-//Getting Users Browsers
-import DeviceDetector from "device-detector-js"
-const deviceDetector = new DeviceDetector();
-const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36";
-const device = deviceDetector.parse(userAgent);
-const userbrowser = device.client.name;
-
-//Hardcoding usercountry and useros
+// User's info
 const usercountry = "India";
-let useros = "windows";
+let useros = "Other"
+let userbrowser = "Other"
 
 
 //App Config
 const app = express();
-const port = 9000;
+const port = process.env.PORT || 9000;
 
 
 //Middlewares
@@ -41,18 +34,29 @@ db.once("open", () => { console.log("DB is Connected Successfully !!") });
 //Home
 app.get("/", (req, res) => {
     res.render("login", { shorturl: "", accessdata: "" });
+    var agent = useragent.parse(req.headers['user-agent']);
+       
     
+        console.log(agent.toJSON());
+        
+
+
 });
 
 
 
 // Accessing Shorten URL
 app.get("/myapp/:id", (req, res) => {
-    dataSchema.findOne({ shortenurl: "localhost:9000/myapp/" + req.params.id }, async (err, data) => {
+    dataSchema.findOne({ shortenurl: "https://myurl-shortener-app.herokuapp.com/myapp/" + req.params.id }, async (err, data) => {
+
+        var agent = useragent.parse(req.headers['user-agent']);
+       
+    
+        userbrowser = agent.toJSON().family;
+        useros = agent.toJSON().os.family;
 
 
-
-        await dataSchema.updateOne({ shortenurl: "localhost:9000/myapp/" + req.params.id },
+        await dataSchema.updateOne({ shortenurl: "https://myurl-shortener-app.herokuapp.com/myapp/" + req.params.id },
             {
                 visits: data.visits + 1,
                 countries: { ...data.countries, [usercountry]: (data.countries[usercountry] === undefined ? 0 : data.countries[usercountry]) + 1 },
@@ -70,7 +74,7 @@ app.get("/myapp/:id", (req, res) => {
 
 //  Details - Shorten URL
 app.get("/data/:id", (req, res) => {
-    dataSchema.findOne({ shortenurl: "localhost:9000/myapp/" + req.params.id }, (err, data) => {
+    dataSchema.findOne({ shortenurl: "https://myurl-shortener-app.herokuapp.com/myapp/" + req.params.id }, (err, data) => {
 
 
         res.render("mychart", { datacoming: data });
@@ -86,15 +90,21 @@ app.post("/", (req, res) => {
 
     const longurl = req.body.longurl;
 
+    var agent = useragent.parse(req.headers['user-agent']);
+    agent.toJSON()
+
+    userbrowser = agent.toJSON().family;
+    useros = agent.toJSON().os.family;
+
     //Generating 5 chr. String
     var result = (Math.random() + 1).toString(36).substring(7);
 
 
     var newData = new dataSchema(
         {
-            shortenurl: "localhost:9000/myapp/" + result,
+            shortenurl: "https://myurl-shortener-app.herokuapp.com/myapp/" + result,
             actualurl: longurl,
-            visits: 0,
+            visits: 1,
             countries: { [usercountry]: 1 },
             browsers: { [userbrowser]: 1 },
             os: { [useros]: 1 }
@@ -109,7 +119,7 @@ app.post("/", (req, res) => {
 
 
     });
-    res.render("login", { shorturl: "localhost:9000/myapp/" + result, accessdata: "localhost:9000/data/" + result });
+    res.render("login", { shorturl: "https://myurl-shortener-app.herokuapp.com/myapp/" + result, accessdata: "https://myurl-shortener-app.herokuapp.com/data/" + result });
 })
 
 
